@@ -1,0 +1,52 @@
+﻿@model WebApp.Models.Reservaciones
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>Cancelar Reservacion</h1>
+
+<h3>Esta seguro que desea borrar esta reservacion?</h3>
+<div>
+   
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Inicio)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Inicio)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Fin)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Fin)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FechaReservacion)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.strFechaReservacion)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Sala)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Sala.Nombre)
+        </dd>
+        <dt class="col-sm-2">
+            Usuario que reservo
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Usuario.UserId)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Cancelar Reservacion" class="btn btn-danger" /> |
+        <a asp-action="Index">Regresar</a>
+    </form>
+</div>

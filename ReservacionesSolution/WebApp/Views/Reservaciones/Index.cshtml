@@ -1,0 +1,64 @@
+﻿@model IEnumerable<WebApp.Models.Reservaciones>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Reservaciones</h1>
+
+<p>
+    <a asp-action="Create">Crear Nueva Reservacion </a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Inicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaReservacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sala)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sala.Ubicacion)
+            </th>
+            <th>
+                Usuario Reservo
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.strFechaReservacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sala.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sala.Ubicacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usuario.UserId)
+            </td>
+            <td>
+                <a asp-action="Delete" asp-route-id="@item.Id">Cancelar</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
