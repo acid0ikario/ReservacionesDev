@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.AspNetCore.Session;
 using Newtonsoft.Json;
+using WebApp.APIutilis;
 using WebApp.Extensions;
 using WebApp.Models;
 using WebApp.Utilidades;
@@ -32,29 +33,20 @@ namespace WebApp.Controllers
         [HttpPost]
         public ActionResult Login(Usuarios usuario)
         {
-            TokenResponse _token = new TokenResponse();
-            HttpClient client = new HttpClient();
-            StringContent content = new StringContent(JsonConvert.SerializeObject(usuario),Encoding.UTF8, "application/json");
-
-            client.BaseAddress = new Uri("https://localhost:44312/api/Account/Authenticate");
-            var responseTask = client.PostAsync(client.BaseAddress.AbsoluteUri, content);
-            responseTask.Wait();
-            var result = responseTask.Result; 
-
+            var result = ApiManager.PostAsync(EndPointsManager.AUTHENTICATE, usuario);
+            var contentResult =  result.Content.ReadAsStringAsync();
+            contentResult.GetAwaiter();
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsStringAsync();
-                readTask.Wait();
-
-                _token = JsonConvert.DeserializeObject<TokenResponse>(readTask.Result);
-               // HttpContext.Session.SetObject(Constantes.TokenSession, _token);
+                var _token = JsonConvert.DeserializeObject<TokenResponse>(contentResult.Result);
+                HttpContext.Session.SetObject(Constantes.TokenSession, _token);
                 SetCokie(Constantes.TokenSession, _token.Token);
                 return RedirectToAction("Index","Reservaciones");
             }
             else
             {
-                var response = result.Content.ReadAsStringAsync();
-                ModelState.AddModelError(result.StatusCode.ToString(), response.Result);
+               
+                ModelState.AddModelError(result.StatusCode.ToString(), contentResult.Result);
             }
             return View(usuario);
 
@@ -66,7 +58,7 @@ namespace WebApp.Controllers
         /// <param name="key">key (unique indentifier)</param>  
         /// <param name="value">value to store in cookie object</param>  
         /// <param name="expireTime">expiration time</param>  
-        public void SetCokie(string key, string value)
+        private void SetCokie(string key, string value)
         {
             CookieOptions option = new CookieOptions();
             option.Expires = DateTime.Now.AddDays(1);
