@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Rewrite.Internal;
+
+using Newtonsoft.Json;
 using WebApp.Extensions;
 using WebApp.Filters;
 using WebApp.Models;
@@ -31,11 +33,11 @@ namespace WebApp.Controllers
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<List<Reservaciones>>();
+                var readTask = result.Content.ReadAsStringAsync();
                 readTask.Wait();
 
-                reservaciones = readTask.Result;
-               
+                reservaciones = JsonConvert.DeserializeObject<List<Reservaciones>>(readTask.Result);
+
             }
             return View(reservaciones);
         }
@@ -60,19 +62,21 @@ namespace WebApp.Controllers
             {
                 Reservaciones reservacion = new Reservaciones();
                 HttpClient client = new HttpClient();
-               
+                StringContent content = new StringContent(JsonConvert.SerializeObject(reservaciones), Encoding.UTF8, "application/json");
+
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetTokenRequest());
                 client.BaseAddress = new Uri("https://localhost:44312/api/Reservaciones/CrearReservacion");
-                var responseTask = client.PostAsJsonAsync(client.BaseAddress.AbsoluteUri, reservaciones);
+                
+                var responseTask = client.PostAsync(client.BaseAddress.AbsoluteUri, content);
                 responseTask.Wait();
                 var result = responseTask.Result;
 
                 if (result.IsSuccessStatusCode)
                 {
-                    var readTask = result.Content.ReadAsAsync<Reservaciones>();
+                    var readTask = result.Content.ReadAsStringAsync();
                     readTask.Wait();
 
-                    reservacion = readTask.Result;
+                    reservacion = JsonConvert.DeserializeObject<Reservaciones>(readTask.Result);
                     return RedirectToAction("Index", "Reservaciones");
                 }
                 else
@@ -144,10 +148,10 @@ namespace WebApp.Controllers
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<List<Salas>>();
+                var readTask = result.Content.ReadAsStringAsync();
                 readTask.Wait();
 
-                salas = readTask.Result;
+                salas = JsonConvert.DeserializeObject<List<Salas>>(readTask.Result);
 
             }
             return salas;
@@ -167,10 +171,10 @@ namespace WebApp.Controllers
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<Reservaciones>();
+                var readTask = result.Content.ReadAsStringAsync();
                 readTask.Wait();
 
-                reservacion = readTask.Result;
+                reservacion = JsonConvert.DeserializeObject<Reservaciones>(readTask.Result);
 
             }
             else {
