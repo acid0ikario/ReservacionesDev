@@ -9,7 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 
-namespace Repository
+namespace Repository.Services
 {
     public class ReservacionesRepository : IReservacionesRespository
     {

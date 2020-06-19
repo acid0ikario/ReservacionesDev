@@ -5,11 +5,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessServices.Interfaces;
 using DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 using Repository.Interfaces;
+using WebApi.Models.Responses;
 
 namespace WebApi.Controllers
 {
@@ -18,12 +20,13 @@ namespace WebApi.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountRepository _account;
-        private readonly IConfiguration _configuration;
+       
+        private readonly IAuthenticationService _authenticationService;
 
-        public AccountController(IAccountRepository account, IConfiguration config)
+        public AccountController(IAccountRepository account, IAuthenticationService authenticationService)
         {
             _account = account;
-            _configuration = config;
+            _authenticationService = authenticationService;
         }
 
         public IActionResult Index()
@@ -34,12 +37,15 @@ namespace WebApi.Controllers
         [HttpPost("Authenticate")]
         public IActionResult Authenticate([FromBody] Usuarios usuario)
         {
-            Usuarios objUsuario = _account.AuthenticateUser(usuario.UserId, usuario.Password);
-            if (objUsuario != null)
-            {
-                return BuildToken(objUsuario);
-            }
-            return Unauthorized("Usuario o contraseñas incorrectas");
+            var userAthenticated = _account.AuthenticateUser(usuario.UserId, usuario.Password);
+            if (userAthenticated == null)
+                return Unauthorized("Usuario o Contraseña Incorrectas");
+
+            var token = _authenticationService.GenerateSecurityToken(userAthenticated);
+            ResponseLogin res = new ResponseLogin();
+            res.Token = token;
+            res.Expire = DateTime.Now.AddDays(30);
+            return Ok(res);
         }
 
         private IActionResult BuildToken(Usuarios user)

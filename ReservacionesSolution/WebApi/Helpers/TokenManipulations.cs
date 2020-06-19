@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace WebApi.Helpers
 {
 
-    public class TokenManipulations
+    public  class TokenManipulations
     {
 
         private readonly string _secretKey;
@@ -26,39 +26,39 @@ namespace WebApi.Helpers
 
         public bool IsAdminUser()
         {
-            //var key = Encoding.ASCII.GetBytes(_secretKey);
-            //var handler = new JwtSecurityTokenHandler();
-            //var validations = new TokenValidationParameters
-            //{
-            //    ValidateIssuerSigningKey = true,
-            //    IssuerSigningKey = new SymmetricSecurityKey(key),
-            //    ValidateIssuer = false,
-            //    ValidateAudience = false
-            //};
+            var key = Encoding.ASCII.GetBytes(_secretKey);
+            var handler = new JwtSecurityTokenHandler();
+            var validations = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
 
-            //var claims = handler.ValidateToken(_token, validations, out var tokenSecure);
+            var claims = handler.ValidateToken(_token, validations, out var tokenSecure);
 
-            //if (claims.Claims.FirstOrDefault(x => x.Type == "RolId").Value == "ADM")
-            //    return true;
+            if (claims.Claims.FirstOrDefault(x => x.Type == "RolId").Value == "ADM")
+                return true;
 
-            //return false;
-            return true;
+            return false;
+           
         }
 
         public string GetLoggedUser()
         {
-            //var key = Encoding.ASCII.GetBytes(_secretKey);
-            //var handler = new JwtSecurityTokenHandler();
-            //var validations = new TokenValidationParameters
-            //{
-            //    ValidateIssuerSigningKey = true,
-            //    IssuerSigningKey = new SymmetricSecurityKey(key),
-            //    ValidateIssuer = false,
-            //    ValidateAudience = false
-            //};
-            //var claims = handler.ValidateToken(_token, validations, out var tokenSecure);
-            //return claims.Identity.Name;
-            return "";
+            var key = Encoding.ASCII.GetBytes(_secretKey);
+            var handler = new JwtSecurityTokenHandler();
+            var validations = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+            var claims = handler.ValidateToken(_token, validations, out var tokenSecure);
+            return claims.Identity.Name;
+            
         }
 
 
