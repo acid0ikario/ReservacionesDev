@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+
 using Repository.Interfaces;
 
 namespace WebApi.Controllers
@@ -44,30 +44,31 @@ namespace WebApi.Controllers
 
         private IActionResult BuildToken(Usuarios user)
         {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserId),
-                new Claim("RolId", user.RolId)
-            };
+            //var claims = new[]
+            //{
+            //    new Claim(JwtRegisteredClaimNames.UniqueName, user.UserId),
+            //    new Claim("RolId", user.RolId)
+            //};
 
-            string secretKey = _configuration.GetValue<string>("DevSecretKey");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            //string secretKey = _configuration.GetValue<string>("DevSecretKey");
+            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expiration = DateTime.UtcNow.AddYears(1);
+            //var expiration = DateTime.UtcNow.AddYears(1);
 
-            JwtSecurityToken token = new JwtSecurityToken(
-               issuer: "syntepro.com",
-               audience: "syntepro.com",
-               claims: claims,
-               expires: expiration,
-               signingCredentials: creds);
+            //JwtSecurityToken token = new JwtSecurityToken(
+            //   issuer: "syntepro.com",
+            //   audience: "syntepro.com",
+            //   claims: claims,
+            //   expires: expiration,
+            //   signingCredentials: creds);
 
-            return Ok(new
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration
-            });
+            //return Ok(new
+            //{
+            //    Token = new JwtSecurityTokenHandler().WriteToken(token),
+            //    Expiration = expiration
+            //});
+            return Ok();
 
         }
     }
